@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -150,28 +151,45 @@ class _RegisterAsChildPageState extends State<RegisterAsChildPage> {
     );
   }
 
-  Future<void> _register() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      if (_passwordController.text != _confirmPasswordController.text) {
-        _showErrorDialog("Passwords do not match");
-        return;
-      }
+Future<void> _register() async {
+  if (_formKey.currentState!.validate()) {
+    try {
+      // 1. Create Auth user
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
 
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        // After successful registration, navigate to the login page or home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      } on FirebaseAuthException catch (e) {
-        _showErrorDialog(e.message ?? "Registration failed");
-      }
+      // 2. Create Firestore document
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+            'uid': userCredential.user!.uid,
+            'name': _nameController.text,
+            'phone': _phoneController.text,
+            'email': _emailController.text,
+            'guardianPhone': _guardianPhoneController.text,
+            'guardianEmail': _guardianEmailController.text,
+            'role': 'child',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      // 3. Navigate after successful creation
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(e.message ?? "Authentication failed");
+    } on FirebaseException catch (e) {
+      _showErrorDialog("Database error: ${e.message}");
+    } catch (e) {
+      _showErrorDialog("Unexpected error: $e");
     }
   }
+}
 
   void _showErrorDialog(String message) {
     showDialog(
