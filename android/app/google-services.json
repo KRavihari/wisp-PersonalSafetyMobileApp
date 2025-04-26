@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "578295022844",
+    "project_id": "wisp-f2551",
+    "storage_bucket": "wisp-f2551.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578295022844:android:b5941139bea922f4938379",
+        "android_client_info": {
+          "package_name": "com.example.app_wisp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA03XheWf4KEuR4wFVsXUL_Fb_YWaVppVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
