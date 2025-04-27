@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shake/shake.dart';
 import 'login.dart';
-import 'package:flutter_sms/flutter_sms.dart'; // Commented SMS package
+import 'package:flutter_sms/flutter_sms.dart'; 
 import 'chat.dart';
 import 'contacts.dart';
 import 'profile.dart';
@@ -56,6 +56,9 @@ class _HomePageState extends State<HomePage> {
   return ['+1234567890', '+0987654321']; // Example numbers
 }
 
+// Add Timer variable
+  Timer? _carouselTimer;
+
   @override
   void initState() {
     super.initState();
@@ -77,11 +80,13 @@ class _HomePageState extends State<HomePage> {
       useFilter: _useFilter,
     );
 
-    // Image carousel
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      setState(() {
-        _currentIndex = (_currentIndex + 1) % images.length;
-      });
+    // Image carousel with timer stored
+   _carouselTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (mounted) { // Check if widget is still in the tree
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % images.length;
+        });
+      }
     });
 
     _pages = [
@@ -102,6 +107,13 @@ class _HomePageState extends State<HomePage> {
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
     );
+  }
+
+  @override
+  void dispose() {
+    _carouselTimer?.cancel(); // Cancel the timer
+    _detector?.stopListening(); // Stop the shake detector to avoid memory leaks
+    super.dispose();
   }
 
   @override

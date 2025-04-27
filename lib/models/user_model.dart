@@ -15,14 +15,27 @@ class UserData {
     required this.guardianEmail,
   });
 
-  factory UserData.fromMap(Map<String, dynamic> map) {
+  // You can add a fromMap method to easily create a UserData instance from Firestore data.
+  factory UserData.fromMap(Map<String, dynamic> data) {
     return UserData(
-      uid: map['uid'] ?? '',
-      name: map['name'] ?? '',
-      phone: map['phone'] ?? '',
-      email: map['email'] ?? '',
-      guardianPhone: map['guardianPhone'] ?? '',
-      guardianEmail: map['guardianEmail'] ?? '',
+      uid: data['uid'],
+      name: data['name'],
+      phone: data['phone'],
+      email: data['email'],
+      guardianPhone: data['guardianPhone'],
+      guardianEmail: data['guardianEmail'],
     );
+  }
+
+  // You can also create a toMap method for saving to Firestore.
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'name': name,
+      'phone': phone,
+      'email': email,
+      'guardianPhone': guardianPhone,
+      'guardianEmail': guardianEmail,
+    };
   }
 }
