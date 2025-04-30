@@ -1,4 +1,5 @@
 import 'package:app_wisp/home.dart';
+import 'package:app_wisp/homeSinhala.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app_wisp/forgotPasswordPage.dart';
@@ -40,7 +41,7 @@ class _LoginPageState extends State<LoginPageSi> {
       if (userCredential.user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomePageSin()),
         );
       }
     } on FirebaseAuthException catch (e) {

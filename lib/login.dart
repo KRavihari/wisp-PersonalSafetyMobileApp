@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                       Icon(Icons.lock, size: 30, color: Colors.black),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  //const SizedBox(height: 20),
                   // Email field
                   TextField(
                     controller: _emailController,
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10), // Reduced space here
+                //  const SizedBox(height: 10), // Reduced space here
                   // Password field
                   TextField(
                     controller: _passwordController,
@@ -158,13 +158,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  //const SizedBox(height: 15),
                   // Login Button
                   Center(
                     child: ElevatedButton(
                       onPressed: () => _loginUser(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo[900],
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -177,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text("Login"),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  //const SizedBox(height: 5),
                   // Forgot Password
                   Center(
                     child: RichText(
@@ -205,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   // Register options
                   Center(
                     child: Column(

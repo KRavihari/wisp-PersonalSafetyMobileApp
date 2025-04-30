@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -8,7 +9,7 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'chat.dart';
 import 'contacts.dart';
 import 'profile.dart';
-import 'package:flutter_tawkto/flutter_tawk.dart';
+//import 'package:flutter_tawkto/flutter_tawk.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -52,9 +53,9 @@ class _HomePageState extends State<HomePage> {
     'assets/home6.png',
   ];
 
-  Future<List<String>> _getContacts() async {
-  return ['+1234567890', '+0987654321']; // Example numbers
-}
+ // Future<List<String>> _getContacts() async {
+ // return ['+1234567890', '+0987654321']; // Example numbers
+//}
 
 // Add Timer variable
   Timer? _carouselTimer;
@@ -120,7 +121,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Safety App'),
+        //title: const Text('Safety App'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -174,7 +175,7 @@ class HomeContentPage extends StatelessWidget {
       onTap: () async {
         final Uri launchUri = Uri(
           scheme: 'tel',
-          path: '+94771553566',
+          path: number,
         );
         if (await canLaunchUrl(launchUri)) {
           await launchUrl(
@@ -194,6 +195,13 @@ class HomeContentPage extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         try {
+          final user = FirebaseAuth.instance.currentUser;
+        if (user == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("User not logged in")),
+          );
+          return;
+        }
           // Get current location
           Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high,
@@ -204,25 +212,34 @@ class HomeContentPage extends StatelessWidget {
               "https://www.google.com/maps/search/?api=1&query="
               "${position.latitude},${position.longitude}";
 
-          // Get contacts (you'll need to implement this)
-          List<String> contacts = await _getContacts(); // Implement contact retrieval
+          // Get contacts from Firestore
+        List<String> numbers = await _getContacts();
 
-          // Send SMS
-          String result = await sendSMS(
-            message: message,
-            recipients: contacts,
-            sendDirect: true,
-          );
-
+          if (numbers.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result)),
+            const SnackBar(content: Text("No emergency contacts found")),
           );
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: ${e.toString()}")),
-          );
+          return;
         }
-      },
+
+          // Send SMS to all contacts
+        await sendSMS(
+          message: message,
+          recipients: numbers,
+          sendDirect: true,
+        );
+
+
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Sent to ${numbers.length} contacts")),
+        );
+
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
+      }
+    },
       child: Container(
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.all(12),
@@ -251,12 +268,53 @@ class HomeContentPage extends StatelessWidget {
     );
   }
 
-  Future<List<String>> _getContacts() async {
-    // Dummy contacts list
-    return ['+94771553566'];
+  // Updated _getContacts implementation
+Future<List<String>> _getContacts() async {
+  final List<String> numbers = [];
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {print(' User not authenticated');
+      return numbers;
+    }
+    print('User UID: ${user.uid}');
+
+    /*Get user document from Firestore
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!userDoc.exists) {
+      print("User document not found");
+      return numbers;
+    }*/
+
+    // Get contacts for this user
+    final contactsQuery = await FirebaseFirestore.instance
+        .collection('contacts')
+        .where('userId', isEqualTo: user.uid)
+        .get();
+  
+  print(' Found ${contactsQuery.docs.length} contacts');
+
+    // Extract and validate numbers
+    for (final doc in contactsQuery.docs) {
+      print('Document ID: ${doc.id}');
+      print(' Document data: ${doc.data()}');
+      final number = doc.get('number')?.toString();
+      print(' Extracted number: $number');
+      
+      if (number != null && number.isNotEmpty) {
+        numbers.add(number);
+      }
+    }
+    
+    print('message was sent to $numbers');
+  } catch (e) {
+    print('Error: $e');
   }
-
-
+  return numbers;
+}
 
   @override
 Widget build(BuildContext context) {
@@ -271,12 +329,12 @@ Widget build(BuildContext context) {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 10),
-        const Text(
-          "",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
+       // const SizedBox(height: 10),
+        //const Text(
+        //  "",
+        //  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        //  textAlign: TextAlign.center,
+       // ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -284,6 +342,7 @@ Widget build(BuildContext context) {
             textAlign: TextAlign.center,
           ),
         ),
+        _locationSender(context),
         Column(  // <- Just a Column instead of ListView+Expanded
           children: [
             _emergencyItem("Police Emergency Hotline", "118/119"),
@@ -292,7 +351,47 @@ Widget build(BuildContext context) {
             _emergencyItem("Women’s Helpline", "1938"),
           ],
         ),
-        _locationSender(context),
+
+        // "Look Around You" Card
+        Card(
+          margin: const EdgeInsets.all(8.0),
+          child: ListTile(
+            leading: const Icon(Icons.map),
+            title: const Text(
+              "Look Around You",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text("Open your current location in Google Maps"),
+            onTap: () async {
+              try {
+                Position position = await Geolocator.getCurrentPosition(
+                  desiredAccuracy: LocationAccuracy.high,
+                );
+
+                final Uri mapsUrl = Uri.parse(
+                  "https://www.google.com/maps/search/?api=1&query="
+                  "${position.latitude},${position.longitude}"
+                );
+
+                if (await canLaunchUrl(mapsUrl)) {
+                  await launchUrl(
+                    mapsUrl,
+                    mode: LaunchMode.externalApplication,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Could not launch Google Maps")),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error: ${e.toString()}")),
+                );
+              }
+            },
+          ),
+        ),
+
       ],
     ),
   );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart'; 
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -39,9 +40,18 @@ class _ContactsPageState extends State<ContactsPage> {
               return ListTile(
                 title: Text(contactData['name'] ?? ''),
                 subtitle: Text(contactData['number'] ?? ''),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => _deleteContact(doc.id),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.call),
+                      onPressed: () => _makeCall(contactData['number']),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => _deleteContact(doc.id),
+                    ),
+                  ],
                 ),
               );
             },
@@ -100,6 +110,19 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
+  // Add this new method for making calls
+  Future<void> _makeCall(String number) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: number);
+    
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch call: $number')),
+      );
+    }
+  }
+
    Future<void> _addContact(String name, String number) async {
     final docRef = _firestore.collection('contacts').doc();
     await docRef.set({
@@ -115,3 +138,5 @@ class _ContactsPageState extends State<ContactsPage> {
     await _firestore.collection('contacts').doc(contactId).delete();
   }
 }
+
+
