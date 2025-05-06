@@ -99,7 +99,9 @@ class _ProfilePageState extends State<ProfilePageSin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FDFF),
       appBar: AppBar(
+        backgroundColor: const Color(0xFFF5FDFF),
         title: const Text('පැතිකඩ'),
         actions: [
           IconButton(

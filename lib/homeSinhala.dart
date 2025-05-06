@@ -7,7 +7,7 @@ import 'package:shake/shake.dart';
 import 'login.dart';
 import 'package:flutter_sms/flutter_sms.dart'; 
 import 'chat.dart';
-import 'contacts.dart';
+import 'contactsSinhala.dart';
 import 'profileSinhala.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePageSin> {
         lastShakeInfo: _lastShakeInfo,
       ),
       const ChatsPage(),
-      const ContactsPage(),
+      const ContactsPageSinhala(),
       const ProfilePageSin(),
     ];
   }
@@ -112,8 +112,10 @@ class _HomePageState extends State<HomePageSin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FDFF),
       appBar: AppBar(
-        title: const Text('සුරක්ෂිත යෙදුම'),
+        backgroundColor: const Color(0xFFF5FDFF),
+        //title: const Text('සුරක්ෂිත යෙදුම'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -333,6 +335,7 @@ Widget build(BuildContext context) {
         ),
 
         Card(
+          color: Colors.white,
           margin: const EdgeInsets.all(8.0),
           child: ListTile(
             leading: const Icon(Icons.map),

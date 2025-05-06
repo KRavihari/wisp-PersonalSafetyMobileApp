@@ -120,7 +120,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FDFF),
       appBar: AppBar(
+        backgroundColor: const Color(0xFFF5FDFF),
         //title: const Text('Safety App'),
         actions: [
           IconButton(
@@ -354,6 +356,7 @@ Widget build(BuildContext context) {
 
         // "Look Around You" Card
         Card(
+          color: Colors.white,
           margin: const EdgeInsets.all(8.0),
           child: ListTile(
             leading: const Icon(Icons.map),

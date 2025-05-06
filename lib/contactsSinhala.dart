@@ -3,14 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart'; 
 
-class ContactsPage extends StatefulWidget {
-  const ContactsPage({super.key});
+class ContactsPageSinhala extends StatefulWidget {
+  const ContactsPageSinhala({super.key});
 
   @override
   _ContactsPageState createState() => _ContactsPageState();
 }
 
-class _ContactsPageState extends State<ContactsPage> {
+class _ContactsPageState extends State<ContactsPageSinhala> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final User? _user = FirebaseAuth.instance.currentUser;
 
@@ -20,8 +20,7 @@ class _ContactsPageState extends State<ContactsPage> {
       backgroundColor: const Color(0xFFF5FDFF),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5FDFF),
-       // automaticallyImplyLeading: false,
-        title: const Text('Contacts'),
+        title: const Text('සම්බන්ධතා'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
@@ -74,17 +73,17 @@ class _ContactsPageState extends State<ContactsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Contact'),
+        title: const Text('සම්බන්ධතාවය එක් කරන්න'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'නම'),
             ),
             TextField(
               controller: numberController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
+              decoration: const InputDecoration(labelText: 'දුරකථන අංකය'),
               keyboardType: TextInputType.phone,
             ),
           ],
@@ -92,7 +91,7 @@ class _ContactsPageState extends State<ContactsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('අවලංගු කරන්න'),
           ),
           TextButton(
             onPressed: () async {
@@ -105,14 +104,13 @@ class _ContactsPageState extends State<ContactsPage> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Save'),
+            child: const Text('සුරකින්න'),
           ),
         ],
       ),
     );
   }
 
-  // Add this new method for making calls
   Future<void> _makeCall(String number) async {
     final Uri phoneUri = Uri(scheme: 'tel', path: number);
     
@@ -120,12 +118,12 @@ class _ContactsPageState extends State<ContactsPage> {
       await launchUrl(phoneUri);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch call: $number')),
+        SnackBar(content: Text('ඇමතුම ආරම්භ කිරීමට නොහැකි විය: $number')),
       );
     }
   }
 
-   Future<void> _addContact(String name, String number) async {
+  Future<void> _addContact(String name, String number) async {
     final docRef = _firestore.collection('contacts').doc();
     await docRef.set({
       'id': docRef.id,
@@ -140,5 +138,3 @@ class _ContactsPageState extends State<ContactsPage> {
     await _firestore.collection('contacts').doc(contactId).delete();
   }
 }
-
-

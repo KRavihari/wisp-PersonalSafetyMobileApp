@@ -8,9 +8,11 @@ class ChatsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: const Color(0xFFF5FDFF),
         appBar: AppBar(
+          backgroundColor: const Color(0xFFF5FDFF),
           title: const Text('lets chat'),
-          backgroundColor: const Color(0XFFF7931E),
+         // backgroundColor: const Color(0XFFF7931E),
           elevation: 0,
         ),
         body: Tawk(

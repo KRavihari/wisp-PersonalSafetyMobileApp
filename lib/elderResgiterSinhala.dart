@@ -15,7 +15,8 @@ class _RegisterAsElderPageState extends State<RegisterAsElderPageSinhala> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50],
+      backgroundColor: const Color(0xFFF5FDFF),
+      //backgroundColor: Colors.blueGrey[50],
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(

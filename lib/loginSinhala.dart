@@ -1,10 +1,9 @@
-import 'package:app_wisp/home.dart';
 import 'package:app_wisp/homeSinhala.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app_wisp/forgotPasswordPage.dart';
-import 'childRegisterSinhala.dart';
-import 'elderResgiterSinhala.dart'; 
+import 'childRegister.dart';
+import 'elderRegister.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,8 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LoginPageSi(),
+    return MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'NotoSansSinhala', // Sinhala font එක අවශ්යයි
+      ),
+      home: const LoginPageSi(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -45,9 +47,9 @@ class _LoginPageState extends State<LoginPageSi> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      String errorMessage = "පිවිසුම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+      String errorMessage = "ඇතුල් වීමට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.";
       if (e.code == 'user-not-found') {
-        errorMessage = "මෙම ඊමේල් ලිපිනය සමඟ පරිශීලකයෙක් හමු නොවීය.";
+        errorMessage = "මෙම ඊමේල් ලිපිනය සමඟ පරිශීලකයෙකු හමු නොවීය.";
       } else if (e.code == 'wrong-password') {
         errorMessage = "වැරදි මුරපදය.";
       }
@@ -65,7 +67,7 @@ class _LoginPageState extends State<LoginPageSi> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Upper section with logo and title
+            // ඉහළ කොටස
             Container(
               color: Colors.indigo[900],
               child: const Center(
@@ -86,7 +88,7 @@ class _LoginPageState extends State<LoginPageSi> {
                       ),
                     ),
                     Text(
-                      "ක්ෂණික සහය සඳහා ඔබව සාදරයෙන් පිළිගනිමු",
+                      "ක්ෂණික ආධාරය අවශ්ය තැන",
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.white,
@@ -97,7 +99,7 @@ class _LoginPageState extends State<LoginPageSi> {
               ),
             ),
             const SizedBox(height: 20),
-            // User Login section
+            // ඇතුල් වීමේ කොටස
             Container(
               height: MediaQuery.of(context).size.height * 0.8,
               padding: const EdgeInsets.all(20),
@@ -112,7 +114,7 @@ class _LoginPageState extends State<LoginPageSi> {
                   const Row(
                     children: [
                       Text(
-                        "පරිශීලක පිවිසුම",
+                        "පරිශීලක ඇතුල් වීම",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -123,20 +125,16 @@ class _LoginPageState extends State<LoginPageSi> {
                       Icon(Icons.lock, size: 30, color: Colors.black),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  // Email field
                   TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email),
-                      labelText: "ඊමේල් ලිපිනය",
+                      labelText: "ඊමේල්",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Password field
                   TextField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -159,13 +157,12 @@ class _LoginPageState extends State<LoginPageSi> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  // Login Button
                   Center(
                     child: ElevatedButton(
                       onPressed: () => _loginUser(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo[900],
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -175,22 +172,20 @@ class _LoginPageState extends State<LoginPageSi> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: const Text("පිවිසෙන්න"),
+                      child: const Text("ඇතුල් වන්න"),
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  // Forgot Password
                   Center(
                     child: RichText(
                       text: TextSpan(
-                        text: "මුරපදය අමතක වුණාද?\u00A0\u00A0",
+                        text: "මුරපදය අමතක වුණාද?  ",
                         style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                         children: [
                           TextSpan(
-                            text: "මෙතැන ක්ලික් කරන්න",
+                            text: "මෙතැන ඔබන්න",
                             style: const TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.bold,
@@ -206,19 +201,18 @@ class _LoginPageState extends State<LoginPageSi> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Register options
+                  const SizedBox(height: 10),
                   Center(
                     child: Column(
                       children: [
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context, 
-                            MaterialPageRoute(builder: (context) => const RegisterAsChildPageSinhala()),
+                            MaterialPageRoute(builder: (context) => const RegisterAsChildPage()),
                             );
                           },
                           child: Text(
-                            "ළමයින් ලෙස ලියාපදිංචි වන්න",
+                            "ළමයෙක් ලෙස ලියාපදිංචි වන්න",
                             style: TextStyle(
                               color: Colors.indigo[900],
                               fontWeight: FontWeight.bold,
@@ -229,11 +223,11 @@ class _LoginPageState extends State<LoginPageSi> {
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context, 
-                            MaterialPageRoute(builder: (context) => const RegisterAsElderPageSinhala()),
+                            MaterialPageRoute(builder: (context) => const RegisterAsElderPage()),
                             );
                           },
                           child: Text(
-                            "මහලු අය ලෙස ලියාපදිංචි වන්න",
+                            "මහලු තැනැත්තෙක් ලෙස ලියාපදිංචි වන්න",
                             style: TextStyle(
                               color: Colors.indigo[900],
                               fontWeight: FontWeight.bold,

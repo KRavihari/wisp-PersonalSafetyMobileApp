@@ -26,7 +26,8 @@ class _RegisterAsChildPageState extends State<RegisterAsChildPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50],
+      backgroundColor: const Color(0xFFF5FDFF),
+      //backgroundColor: Colors.blueGrey[50],
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -175,6 +176,15 @@ Future<void> _register() async {
             'role': 'child',
             'createdAt': FieldValue.serverTimestamp(),
           });
+
+          //3. Create contact document for guardian
+      await FirebaseFirestore.instance.collection('contacts').add({
+        'name': _guardianEmailController.text, // Using email as name
+        'number': _guardianPhoneController.text,
+        'userId': userCredential.user!.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+        'isGuardian': true, // Optional: Add flag for guardian contacts
+      });
 
       // 3. Navigate after successful creation
       Navigator.pushReplacement(
