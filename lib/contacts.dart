@@ -129,7 +129,7 @@ class _ContactsPageState extends State<ContactsPage> {
     final docRef = _firestore.collection('contacts').doc();
     await docRef.set({
       'id': docRef.id,
-      'name': name,
+      'nam': name,
       'number': number,
       'userId': _user!.uid,
       'createdAt': FieldValue.serverTimestamp(),
